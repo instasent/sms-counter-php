@@ -44,4 +44,4 @@ SMS Counter (PHP) is released under the [MIT License](LICENSE-MIT.md)
 ###Mentions
 
 * Original idea : [danxexe/sms-counter](https://github.com/danxexe/sms-counter)
-* Form idea from: [acpmasquerade/sms-counter-php](https://github.com/acpmasquerade/sms-counter-php) Is Buggy!
+* Fork Idea from: [acpmasquerade/sms-counter-php](https://github.com/acpmasquerade/sms-counter-php) Is Buggy!
