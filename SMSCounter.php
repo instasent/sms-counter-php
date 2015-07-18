@@ -67,7 +67,7 @@ class SMSCounter
      */
     const UTF16_LEN_MULTIPART = 67;
 
-    public function intGsm7bitMap()
+    public function getGsm7bitMap()
     {
         return [
             10, 12, 13, 32, 33, 34, 35, 36,
@@ -92,16 +92,16 @@ class SMSCounter
         ];
     }
 
-    public function intGsm7bitExMap()
+    public function getAddedGsm7bitExMap()
     {
         return [12, 91, 92, 93, 94, 123, 124, 125, 126, 8364];
     }
 
-    public function intGsm7bitCombinedMap()
+    public function getGsm7bitExMap()
     {
         return array_merge(
-            $this->intGsm7bitMap(),
-            $this->intGsm7bitExMap()
+            $this->getGsm7bitMap(),
+            $this->getAddedGsm7bitExMap()
         );
     }
 
@@ -178,13 +178,13 @@ class SMSCounter
             $text = utf8ToUnicode($text);
         }
 
-        $utf16Chars = array_diff($text, $this->intGsm7bitCombinedMap());
+        $utf16Chars = array_diff($text, $this->getGsm7bitExMap());
 
         if (count($utf16Chars)) {
             return self::UTF16;
         }
 
-        $exChars = array_intersect($text, $this->intGsm7bitExMap());
+        $exChars = array_intersect($text, $this->getAddedGsm7bitExMap());
 
         if (count($exChars)) {
             return self::GSM_7BIT_EX;
@@ -298,7 +298,7 @@ class SMSCounter
      */
     public function replaceNonGsmChars($str, $replacement = null)
     {
-        $validChars = $this->intGsm7bitCombinedMap();
+        $validChars = $this->getGsm7bitExMap();
 
         $allChars = self::utf8ToUnicode($str);
 
