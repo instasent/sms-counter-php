@@ -67,6 +67,11 @@ class SMSCounter
      */
     const UTF16_LEN_MULTIPART = 67;
 
+    /**
+     * Get the charset for GSM7
+     *
+     * @return array
+     */
     public function getGsm7bitMap()
     {
         return [
@@ -92,11 +97,21 @@ class SMSCounter
         ];
     }
 
+    /**
+     * Get the extended chars for GSM7-EX
+     *
+     * @return array
+     */
     public function getAddedGsm7bitExMap()
     {
         return [12, 91, 92, 93, 94, 123, 124, 125, 126, 8364];
     }
 
+    /**
+     * Get GSM7-EX full map
+     *
+     * @return array
+     */
     public function getGsm7bitExMap()
     {
         return array_merge(
@@ -331,15 +346,31 @@ class SMSCounter
         return $this->unicodeToUtf8($allChars);
     }
 
+    /**
+     * Replace chars with most similar supported by GSM and remove other unicode
+     * symbols
+     *
+     * @param string $str
+     *
+     * @return string
+     */
     public function sanitizeToGSM($str)
     {
-        $str = $this->removeAccents($str);
+        $str = $this->replaceToSimilarGSM($str);
         $str = $this->removeNonGsmChars($str);
 
         return $str;
     }
 
-    public function removeAccents($str)
+    /**
+     * Replace chars with symbols and acutes with most similar chars supported
+     * by GSM7
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    public function replaceToSimilarGSM($str)
     {
         if (!preg_match('/[\x80-\xff]/', $str)) {
             return $str;
@@ -360,7 +391,7 @@ class SMSCounter
           chr(195).chr(150) => 'O', chr(195).chr(153) => 'U',
           chr(195).chr(154) => 'U', chr(195).chr(155) => 'U',
           chr(195).chr(156) => 'U', chr(195).chr(157) => 'Y',
-          chr(195).chr(159) => 's', chr(195).chr(160) => 'a',
+          chr(195).chr(159) => 's', // chr(195).chr(160) => 'a',
           chr(195).chr(161) => 'a', chr(195).chr(162) => 'a',
           chr(195).chr(163) => 'a', chr(195).chr(164) => 'a',
           chr(195).chr(165) => 'a', chr(195).chr(167) => 'c',
