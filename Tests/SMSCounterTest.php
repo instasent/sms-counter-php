@@ -138,4 +138,48 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedTExt, $output);
     }
+
+    public function testTruncate1SmsGSM7()
+    {
+        $text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.";
+        $expectedTExt = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient ";
+
+        $smsCounter = new SMSCounter;
+        $output = $smsCounter->truncate($text, 1);
+
+        $this->assertEquals($expectedTExt, $output);
+    }
+
+    public function testTruncate2SmsGSM7()
+    {
+        $text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient";
+        $expectedTExt = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis d";
+
+        $smsCounter = new SMSCounter;
+        $output = $smsCounter->truncate($text, 2);
+
+        $this->assertEquals($expectedTExt, $output);
+    }
+
+    public function testTruncate1SmsUnicode()
+    {
+        $text = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa";
+        $expectedTExt = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipisci";
+
+        $smsCounter = new SMSCounter;
+        $output = $smsCounter->truncate($text, 1);
+
+        $this->assertEquals($expectedTExt, $output);
+    }
+
+    public function testTruncate2SmsUnicode()
+    {
+        $text = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula e ☃get dolor. Aenean massa Lorem ipsum dolor sit amet, consectetuer adip eg";
+        $expectedTExt = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula e ☃get dolor. Aenean massa Lorem ";
+
+        $smsCounter = new SMSCounter;
+        $output = $smsCounter->truncate($text, 2);
+
+        $this->assertEquals($expectedTExt, $output);
+    }
 }

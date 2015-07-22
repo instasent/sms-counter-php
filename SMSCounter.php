@@ -67,11 +67,6 @@ class SMSCounter
      */
     const UTF16_LEN_MULTIPART = 67;
 
-    /**
-     * Get the charset for GSM7
-     *
-     * @return array
-     */
     public function getGsm7bitMap()
     {
         return [
@@ -97,21 +92,11 @@ class SMSCounter
         ];
     }
 
-    /**
-     * Get the extended chars for GSM7-EX
-     *
-     * @return array
-     */
     public function getAddedGsm7bitExMap()
     {
         return [12, 91, 92, 93, 94, 123, 124, 125, 126, 8364];
     }
 
-    /**
-     * Get GSM7-EX full map
-     *
-     * @return array
-     */
     public function getGsm7bitExMap()
     {
         return array_merge(
@@ -183,6 +168,8 @@ class SMSCounter
     /**
      * Detects the encoding of a particular text.
      *
+     * @todo Remove &$exChars reference
+     *
      * @return string (GSM_7BIT|GSM_7BIT_EX|UTF16)
      */
     public function detectEncoding($text, &$exChars)
@@ -209,6 +196,8 @@ class SMSCounter
     /**
      * Generates array of unicode points for the utf8 string.
      *
+     * @todo Fix complexity and improve var namming
+     *
      * @return array
      */
     public function utf8ToUnicode($str)
@@ -216,9 +205,8 @@ class SMSCounter
         $unicode = array();
         $values = array();
         $lookingFor = 1;
-        $len = strlen($str);
 
-        for ($i = 0; $i < $len; $i++) {
+        for ($i = 0; $i < strlen($str); $i++) {
             $thisValue = ord($str[ $i ]);
 
             if ($thisValue < 128) {
@@ -343,31 +331,22 @@ class SMSCounter
         return $this->unicodeToUtf8($allChars);
     }
 
-    /**
-     * Replace chars with most similar supported by GSM and remove other unicode
-     * symbols
-     *
-     * @param string $str
-     *
-     * @return string
-     */
     public function sanitizeToGSM($str)
     {
-        $str = $this->replaceToSimilarGSM($str);
+        $str = $this->removeAccents($str);
         $str = $this->removeNonGsmChars($str);
 
         return $str;
     }
 
     /**
-     * Replace chars with symbols and acutes with most similar chars supported
-     * by GSM7
+     * @todo Remove valid GSM chars
      *
-     * @param string $str
+     * @param string $str Message text
      *
-     * @return string
+     * @return string Sanitized message text
      */
-    public function replaceToSimilarGSM($str)
+    public function removeAccents($str)
     {
         if (!preg_match('/[\x80-\xff]/', $str)) {
             return $str;
@@ -471,6 +450,49 @@ class SMSCounter
         );
 
         $str = strtr($str, $chars);
+
+        return $str;
+    }
+
+    /**
+     * Truncated to the limit of chars allowed by number of SMS. It will detect
+     * the encoding an multipart limits to apply the truncate.
+     *
+     * @param string $str      Message text
+     * @param int    $messages Number of SMS allowed
+     *
+     * @return string Truncated message
+     */
+    public function truncate($str, $limitSms)
+    {
+        $count = $this->count($str);
+
+        if ($count->messages <= $limitSms) {
+            return $str;
+        }
+
+        if ($count->encoding == 'UTF16') {
+            $limit = self::UTF16_LEN;
+
+            if ($limitSms > 2) {
+                $limit = self::UTF16_LEN_MULTIPART;
+            }
+        }
+
+        if ($count->encoding != 'UTF16') {
+            $limit = self::GSM_7BIT_LEN;
+
+            if ($limitSms > 2) {
+                $limit = self::GSM_7BIT_LEN_MULTIPART;
+            }
+        }
+
+        do {
+            $str = mb_substr($str, 0, $limit * $limitSms);
+            $count = $this->count($str);
+
+            $limit = $limit -1;
+        } while ($count->messages > $limitSms);
 
         return $str;
     }
