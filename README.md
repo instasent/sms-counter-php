@@ -2,7 +2,8 @@
 
 Character counter for SMS Messages
 
-[![Build Status](https://travis-ci.org/wobblecode/sms-counter-php.svg?branch=master)](https://travis-ci.org/wobblecode/sms-counter-php)
+[![Build Status](https://img.shields.io/travis/wobblecode/sms-counter-php.svg?style=flat-square)](https://travis-ci.org/wobblecode/sms-counter-php)
+[![SensioLabsInsight](https://img.shields.io/sensiolabs/i/0a2fa87a-0287-46f6-b8b5-818b44a2b9f9.svg?style=flat-square)](https://insight.sensiolabs.com/projects/0a2fa87a-0287-46f6-b8b5-818b44a2b9f9)
 
 ##Usage
 
