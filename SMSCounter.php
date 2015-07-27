@@ -205,8 +205,9 @@ class SMSCounter
         $unicode = array();
         $values = array();
         $lookingFor = 1;
+        $len = strlen($str);
 
-        for ($i = 0; $i < strlen($str); $i++) {
+        for ($i = 0; $i < $len; $i++) {
             $thisValue = ord($str[ $i ]);
 
             if ($thisValue < 128) {
