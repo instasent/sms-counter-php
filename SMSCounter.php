@@ -168,8 +168,6 @@ class SMSCounter
     /**
      * Detects the encoding of a particular text.
      *
-     * @todo Remove &$exChars reference
-     *
      * @return string (GSM_7BIT|GSM_7BIT_EX|UTF16)
      */
     public function detectEncoding($text, &$exChars)
@@ -195,8 +193,6 @@ class SMSCounter
 
     /**
      * Generates array of unicode points for the utf8 string.
-     *
-     * @todo Fix complexity and improve var namming
      *
      * @return array
      */
@@ -341,8 +337,6 @@ class SMSCounter
     }
 
     /**
-     * @todo Remove valid GSM chars
-     *
      * @param string $str Message text
      *
      * @return string Sanitized message text
