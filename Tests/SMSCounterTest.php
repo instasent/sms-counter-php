@@ -130,11 +130,22 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testRemoveNonGSMChars()
     {
-        $text = "áno-unicode-remaining`";
-        $expectedTExt = "no-unicode-remaining";
+        $text = "áno-unicode-remaining` ñ";
+        $expectedTExt = "no-unicode-remaining ñ";
 
         $smsCounter = new SMSCounter;
         $output = $smsCounter->removeNonGsmChars($text);
+
+        $this->assertEquals($expectedTExt, $output);
+    }
+
+    public function testSanitizeToGSM()
+    {
+        $text = "Test sanitization à ñ Ç";
+        $expectedTExt = "Test sanitization à ñ Ç";
+
+        $smsCounter = new SMSCounter;
+        $output = $smsCounter->sanitizeToGSM($text);
 
         $this->assertEquals($expectedTExt, $output);
     }
