@@ -210,7 +210,7 @@ class SMSCounter
                 $unicode[] = $thisValue;
             }
 
-            if ($thisValue > 128) {
+            if ($thisValue >= 128) {
                 if (count($values) == 0) {
                     $lookingFor = ($thisValue < 224) ? 2 : 3;
                 }
