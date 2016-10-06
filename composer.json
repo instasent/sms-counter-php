@@ -1,15 +1,17 @@
 {
-    "name": "wobblecode/sms-counter-php",
+    "name": "instasent/sms-counter-php",
     "type": "library",
     "description": "SMS Counter PHP Class Library which detects encoding of an SMS message text, counts the characters as per the encoding and gives page limit information.",
     "keywords": ["SMS", "counter", "GSM", "Unicode", "Mobile"],
-    "homepage": "http://github.com/wobblecode/sms-counter-php",
+    "homepage": "http://github.com/instasent/sms-counter-php",
     "license": "MIT",
-    "authors": [{
-        "name": "Luis Hdez",
-        "email": "luis.munoz.hdez@gmail.com",
-        "homepage": "http://www.wobblecode.com"
-    }],
+    "authors": [
+        {
+            "name": "Luis Hdez",
+            "email": "luis.munoz.hdez@gmail.com",
+            "homepage": "http://www.instasent.com"
+        }
+    ],
     "require": {
         "php": ">=5.4.0"
     },
