@@ -1,8 +1,8 @@
 <?php
 
-namespace WobbleCode\SMSCounter\Tests;
+namespace Instasent\SMSCounter\Tests;
 
-use WobbleCode\SMSCounter\SMSCounter;
+use Instasent\SMSCounter\SMSCounter;
 
 class SMSCounterTest extends \PHPUnit_Framework_TestCase
 {
