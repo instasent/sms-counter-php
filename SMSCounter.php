@@ -1,6 +1,6 @@
 <?php
 
-namespace WobbleCode\SMSCounter;
+namespace Instasent\SMSCounter;
 
 class SMSCounter
 {
