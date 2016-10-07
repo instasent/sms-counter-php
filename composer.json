@@ -10,6 +10,11 @@
             "name": "Luis Hdez",
             "email": "luis.munoz.hdez@gmail.com",
             "homepage": "http://www.instasent.com"
+        },
+        {
+            "name": "Marcos Gómez",
+            "email": "marcos@instasent.com",
+            "homepage": "http://www.instasent.com"
         }
     ],
     "require": {
@@ -17,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "WobbleCode\\SMSCounter\\": ""
+            "Instasent\\SMSCounter\\": ""
         }
     }
 }
