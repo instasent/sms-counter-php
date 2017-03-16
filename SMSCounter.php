@@ -114,19 +114,19 @@ class SMSCounter
     {
         $unicodeArray = $this->utf8ToUnicode($text);
 
-        # variable to catch if any ex chars while encoding detection.
-        $exChars = array();
+        // variable to catch if any ex chars while encoding detection.
+        $exChars = [];
         $encoding = $this->detectEncoding($unicodeArray, $exChars);
         $length = count($unicodeArray);
 
         if ($encoding === self::GSM_7BIT_EX) {
             $lengthExchars = count($exChars);
-            # Each exchar in the GSM 7 Bit encoding takes one more space
-            # Hence the length increases by one char for each of those Ex chars.
+            // Each exchar in the GSM 7 Bit encoding takes one more space
+            // Hence the length increases by one char for each of those Ex chars.
             $length += $lengthExchars;
         }
 
-        # Select the per message length according to encoding and the message length
+        // Select the per message length according to encoding and the message length
         switch ($encoding) {
             case self::GSM_7BIT:
                 $perMessage = self::GSM_7BIT_LEN;
@@ -198,13 +198,13 @@ class SMSCounter
      */
     public function utf8ToUnicode($str)
     {
-        $unicode = array();
-        $values = array();
+        $unicode = [];
+        $values = [];
         $lookingFor = 1;
         $len = strlen($str);
 
         for ($i = 0; $i < $len; $i++) {
-            $thisValue = ord($str[ $i ]);
+            $thisValue = ord($str[$i]);
 
             if ($thisValue < 128) {
                 $unicode[] = $thisValue;
@@ -223,7 +223,7 @@ class SMSCounter
                     (($values[0] % 32) * 64) + ($values[1] % 64);
 
                     $unicode[] = $number;
-                    $values = array();
+                    $values = [];
                     $lookingFor = 1;
                 }
             }
@@ -287,7 +287,7 @@ class SMSCounter
     /**
      * Replaces non GSM characters from a string.
      *
-     * @param string $str String to be replaced
+     * @param string $str         String to be replaced
      * @param string $replacement String of characters to be replaced with
      *
      * @return (string|false) if replacement string is more than 1 character
@@ -302,7 +302,7 @@ class SMSCounter
             return false;
         }
 
-        $replacementArray = array();
+        $replacementArray = [];
         $unicodeArray = $this->utf8ToUnicode($replacement);
         $replacementUnicode = array_pop($unicodeArray);
 
@@ -346,7 +346,7 @@ class SMSCounter
             return $str;
         }
 
-        $chars = array(
+        $chars = [
           // Decompositions for Latin-1 Supplement
           chr(195).chr(128) => 'A',
           chr(195).chr(129) => 'A',
@@ -429,7 +429,7 @@ class SMSCounter
           chr(196).chr(172) => 'I', chr(196).chr(173) => 'i',
           chr(196).chr(174) => 'I', chr(196).chr(175) => 'i',
           chr(196).chr(176) => 'I', chr(196).chr(177) => 'i',
-          chr(196).chr(178) => 'IJ',chr(196).chr(179) => 'ij',
+          chr(196).chr(178) => 'IJ', chr(196).chr(179) => 'ij',
           chr(196).chr(180) => 'J', chr(196).chr(181) => 'j',
           chr(196).chr(182) => 'K', chr(196).chr(183) => 'k',
           chr(196).chr(184) => 'k', chr(196).chr(185) => 'L',
@@ -452,13 +452,13 @@ class SMSCounter
           chr(197).chr(142) => 'O',
           chr(197).chr(143) => 'o',
           chr(197).chr(144) => 'O', chr(197).chr(145) => 'o',
-          chr(197).chr(146) => 'OE',chr(197).chr(147) => 'oe',
-          chr(197).chr(148) => 'R',chr(197).chr(149) => 'r',
-          chr(197).chr(150) => 'R',chr(197).chr(151) => 'r',
-          chr(197).chr(152) => 'R',chr(197).chr(153) => 'r',
-          chr(197).chr(154) => 'S',chr(197).chr(155) => 's',
-          chr(197).chr(156) => 'S',chr(197).chr(157) => 's',
-          chr(197).chr(158) => 'S',chr(197).chr(159) => 's',
+          chr(197).chr(146) => 'OE', chr(197).chr(147) => 'oe',
+          chr(197).chr(148) => 'R', chr(197).chr(149) => 'r',
+          chr(197).chr(150) => 'R', chr(197).chr(151) => 'r',
+          chr(197).chr(152) => 'R', chr(197).chr(153) => 'r',
+          chr(197).chr(154) => 'S', chr(197).chr(155) => 's',
+          chr(197).chr(156) => 'S', chr(197).chr(157) => 's',
+          chr(197).chr(158) => 'S', chr(197).chr(159) => 's',
           chr(197).chr(160) => 'S', chr(197).chr(161) => 's',
           chr(197).chr(162) => 'T', chr(197).chr(163) => 't',
           chr(197).chr(164) => 'T', chr(197).chr(165) => 't',
@@ -474,8 +474,8 @@ class SMSCounter
           chr(197).chr(184) => 'Y', chr(197).chr(185) => 'Z',
           chr(197).chr(186) => 'z', chr(197).chr(187) => 'Z',
           chr(197).chr(188) => 'z', chr(197).chr(189) => 'Z',
-          chr(197).chr(190) => 'z', chr(197).chr(191) => 's'
-        );
+          chr(197).chr(190) => 'z', chr(197).chr(191) => 's',
+        ];
 
         $str = strtr($str, $chars);
 
@@ -519,7 +519,7 @@ class SMSCounter
             $str = mb_substr($str, 0, $limit * $limitSms);
             $count = $this->count($str);
 
-            $limit = $limit -1;
+            $limit = $limit - 1;
         } while ($count->messages > $limitSms);
 
         return $str;
