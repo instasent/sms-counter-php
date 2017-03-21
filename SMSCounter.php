@@ -114,19 +114,19 @@ class SMSCounter
     {
         $unicodeArray = $this->utf8ToUnicode($text);
 
-        # variable to catch if any ex chars while encoding detection.
-        $exChars = array();
+        // variable to catch if any ex chars while encoding detection.
+        $exChars = [];
         $encoding = $this->detectEncoding($unicodeArray, $exChars);
         $length = count($unicodeArray);
 
         if ($encoding === self::GSM_7BIT_EX) {
             $lengthExchars = count($exChars);
-            # Each exchar in the GSM 7 Bit encoding takes one more space
-            # Hence the length increases by one char for each of those Ex chars.
+            // Each exchar in the GSM 7 Bit encoding takes one more space
+            // Hence the length increases by one char for each of those Ex chars.
             $length += $lengthExchars;
         }
 
-        # Select the per message length according to encoding and the message length
+        // Select the per message length according to encoding and the message length
         switch ($encoding) {
             case self::GSM_7BIT:
                 $perMessage = self::GSM_7BIT_LEN;
@@ -198,13 +198,13 @@ class SMSCounter
      */
     public function utf8ToUnicode($str)
     {
-        $unicode = array();
-        $values = array();
+        $unicode = [];
+        $values = [];
         $lookingFor = 1;
         $len = strlen($str);
 
         for ($i = 0; $i < $len; $i++) {
-            $thisValue = ord($str[ $i ]);
+            $thisValue = ord($str[$i]);
 
             if ($thisValue < 128) {
                 $unicode[] = $thisValue;
@@ -223,7 +223,7 @@ class SMSCounter
                     (($values[0] % 32) * 64) + ($values[1] % 64);
 
                     $unicode[] = $number;
-                    $values = array();
+                    $values = [];
                     $lookingFor = 1;
                 }
             }
@@ -287,7 +287,7 @@ class SMSCounter
     /**
      * Replaces non GSM characters from a string.
      *
-     * @param string $str String to be replaced
+     * @param string $str         String to be replaced
      * @param string $replacement String of characters to be replaced with
      *
      * @return (string|false) if replacement string is more than 1 character
@@ -302,7 +302,7 @@ class SMSCounter
             return false;
         }
 
-        $replacementArray = array();
+        $replacementArray = [];
         $unicodeArray = $this->utf8ToUnicode($replacement);
         $replacementUnicode = array_pop($unicodeArray);
 
@@ -401,7 +401,7 @@ class SMSCounter
           'Ĭ' => 'I', 'ĭ' => 'i',
           'Į' => 'I', 'į' => 'i',
           'İ' => 'I', 'ı' => 'i',
-          'Ĳ' => 'IJ','ĳ' => 'ij',
+          'Ĳ' => 'IJ', 'ĳ' => 'ij',
           'Ĵ' => 'J', 'ĵ' => 'j',
           'Ķ' => 'K', 'ķ' => 'k',
           'ĸ' => 'k', 'Ĺ' => 'L',
@@ -417,13 +417,13 @@ class SMSCounter
           'Ō' => 'O', 'ō' => 'o',
           'Ŏ' => 'O', 'ŏ' => 'o',
           'Ő' => 'O', 'ő' => 'o',
-          'Œ' => 'OE','œ' => 'oe',
-          'Ŕ' => 'R','ŕ' => 'r',
-          'Ŗ' => 'R','ŗ' => 'r',
-          'Ř' => 'R','ř' => 'r',
-          'Ś' => 'S','ś' => 's',
-          'Ŝ' => 'S','ŝ' => 's',
-          'Ş' => 'S','ş' => 's',
+          'Œ' => 'OE', 'œ' => 'oe',
+          'Ŕ' => 'R', 'ŕ' => 'r',
+          'Ŗ' => 'R', 'ŗ' => 'r',
+          'Ř' => 'R', 'ř' => 'r',
+          'Ś' => 'S', 'ś' => 's',
+          'Ŝ' => 'S', 'ŝ' => 's',
+          'Ş' => 'S', 'ş' => 's',
           'Š' => 'S', 'š' => 's',
           'Ţ' => 'T', 'ţ' => 't',
           'Ť' => 'T', 'ť' => 't',
@@ -555,7 +555,7 @@ class SMSCounter
             $str = mb_substr($str, 0, $limit * $limitSms);
             $count = $this->count($str);
 
-            $limit = $limit -1;
+            $limit = $limit - 1;
         } while ($count->messages > $limitSms);
 
         return $str;
