@@ -3,8 +3,9 @@
 namespace Instasent\SMSCounter\Tests;
 
 use Instasent\SMSCounter\SMSCounter;
+use PHPUnit\Framework\TestCase;
 
-class SMSCounterTest extends \PHPUnit_Framework_TestCase
+class SMSCounterTest extends TestCase
 {
     public function testGSM()
     {
