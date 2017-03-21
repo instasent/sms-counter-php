@@ -5,7 +5,7 @@ Character counter for SMS Messages
 [![Build Status](https://img.shields.io/travis/instasent/sms-counter-php.svg?style=flat-square)](https://travis-ci.org/instasent/sms-counter-php)
 [![SensioLabsInsight](https://img.shields.io/sensiolabs/i/0a2fa87a-0287-46f6-b8b5-818b44a2b9f9.svg?style=flat-square)](https://insight.sensiolabs.com/projects/0a2fa87a-0287-46f6-b8b5-818b44a2b9f9)
 
-##Usage
+## Usage
 
 ```php
 use Instasent\SMSCounter\SMSCounter;
@@ -26,7 +26,7 @@ stdClass Object
 )
 ```
 
-##Installation
+## Installation
 
 `sms-counter-php` is available via [composer](http://getcomposer.org) on [packagist](https://packagist.org/packages/instasent/sms-counter-php).
 
@@ -38,7 +38,7 @@ stdClass Object
 }
 ```
 
-##License
+## License
 
 SMS Counter (PHP) is released under the [MIT License](LICENSE-MIT.md)
 
