@@ -10,7 +10,7 @@ Character counter for SMS Messages
 ```php
 use Instasent\SMSCounter\SMSCounter;
 
-$smsCounter = new SMSCounter;
+$smsCounter = new SMSCounter();
 $smsCounter->count('some-string-to-be-counted');
 ```
 
@@ -26,15 +26,22 @@ stdClass Object
 )
 ```
 
+```php
+use Instasent\SMSCounter\SMSCounter;
+
+$smsCounter = new SMSCounter();
+$smsCounter->sanitizeToGSM('dadáó'); //return dadao
+```
+
 ## Installation
 
 `sms-counter-php` is available via [composer](http://getcomposer.org) on [packagist](https://packagist.org/packages/instasent/sms-counter-php).
 
 ```json
 {
-"require": {
-"instasent/sms-counter-php": "dev-master"
-}
+    "require": {
+        "instasent/sms-counter-php": "^0.3"
+    }
 }
 ```
 
