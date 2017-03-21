@@ -139,15 +139,15 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedTExt, $output);
     }
 
-    public function testSanitizeToGSM()
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testSanitizeToGSM($text, $expectedText)
     {
-        $text = "Test sanitization à ñ Ç";
-        $expectedTExt = "Test sanitization à ñ Ç";
-
         $smsCounter = new SMSCounter;
         $output = $smsCounter->sanitizeToGSM($text);
 
-        $this->assertEquals($expectedTExt, $output);
+        $this->assertEquals($expectedText, $output);
     }
 
     public function testTruncate1SmsGSM7()
@@ -192,5 +192,13 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
         $output = $smsCounter->truncate($text, 2);
 
         $this->assertEquals($expectedTExt, $output);
+    }
+
+    public function dataProvider() {
+        return [
+            ['@£$¥èéùìòÇØøÅåΔ_ΦΓΛΩΠΨΣΘΞ^{}\[~]|€ÆæßÉ!\"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà','@£$¥èéùìòÇØøÅåΔ_ΦΓΛΩΠΨΣΘΞ^{}\[~]|€ÆæßÉ!\"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà'],
+            ['Lhg jjjo fx 382 64237 12299 qmecb. Ç éæ+! -[Å*_ (¡)| ?Λ^ ~£;ΩΠ¿ ÑΔ #ΓüΘ¥ñ,É øΨì] ò= Ü. @å<: ö%\'Æ¤"Ö> Ø§Φ{ }/&Ä ùß\€ èà Ξ$äΣ.','Lhg jjjo fx 382 64237 12299 qmecb. Ç éæ+! -[Å*_ (¡)| ?Λ^ ~£;ΩΠ¿ ÑΔ #ΓüΘ¥ñ,É øΨì] ò= Ü. @å<: ö%\'Æ¤"Ö> Ø§Φ{ }/&Ä ùß\€ èà Ξ$äΣ.'],
+            ['dadáó','dadao'],
+        ];
     }
 }
