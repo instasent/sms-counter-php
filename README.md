@@ -42,7 +42,7 @@ $smsCounter->sanitizeToGSM('dadáó'); //return dadao
 ```json
 {
     "require": {
-        "instasent/sms-counter-php": "^0.3"
+       "instasent/sms-counter-php": "^0.3"
     }
 }
 ```
