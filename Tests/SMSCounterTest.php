@@ -3,20 +3,21 @@
 namespace Instasent\SMSCounter\Tests;
 
 use Instasent\SMSCounter\SMSCounter;
+use PHPUnit\Framework\TestCase;
 
-class SMSCounterTest extends \PHPUnit_Framework_TestCase
+class SMSCounterTest extends TestCase
 {
     public function testGSM()
     {
-        $text = "a GSM Text";
+        $text = 'a GSM Text';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::GSM_7BIT;
         $expected->length = 10;
-        $expected->per_message= 160;
+        $expected->per_message = 160;
         $expected->remaining = 150;
         $expected->messages = 1;
 
@@ -25,14 +26,14 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testGSMSymbols()
     {
-        $text = "a GSM +Text";
-        $smsCounter = new SMSCounter;
+        $text = 'a GSM +Text';
+        $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::GSM_7BIT;
         $expected->length = 11;
-        $expected->per_message= 160;
+        $expected->per_message = 160;
         $expected->remaining = 149;
         $expected->messages = 1;
 
@@ -41,31 +42,31 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testGSMMultiPage()
     {
-        $text = "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
+        $text = '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::GSM_7BIT;
         $expected->length = 170;
-        $expected->per_message= 153;
+        $expected->per_message = 153;
         $expected->remaining = 153 * 2 - 170;
         $expected->messages = 2;
 
@@ -74,22 +75,22 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testUnicodeMultiPage()
     {
-        $text = "`";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
-        $text .= "1234567890";
+        $text = '`';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
+        $text .= '1234567890';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::UTF16;
         $expected->length = 71;
-        $expected->per_message= 67;
+        $expected->per_message = 67;
         $expected->remaining = 67 * 2 - 71;
         $expected->messages = 2;
 
@@ -99,7 +100,7 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
     public function testCarriageReturn()
     {
         $text = "\n\r";
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
@@ -114,14 +115,14 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testUnicode()
     {
-        $text = "`";
-        $smsCounter = new SMSCounter;
+        $text = '`';
+        $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::UTF16;
         $expected->length = 1;
-        $expected->per_message= 70;
+        $expected->per_message = 70;
         $expected->remaining = 69;
         $expected->messages = 1;
 
@@ -130,32 +131,32 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testRemoveNonGSMChars()
     {
-        $text = "áno-unicode-remaining` ñ";
-        $expectedTExt = "no-unicode-remaining ñ";
+        $text = 'áno-unicode-remaining` ñ';
+        $expectedTExt = 'no-unicode-remaining ñ';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $output = $smsCounter->removeNonGsmChars($text);
 
         $this->assertEquals($expectedTExt, $output);
     }
 
-    public function testSanitizeToGSM()
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testSanitizeToGSM($text, $expectedText)
     {
-        $text = "Test sanitization à ñ Ç";
-        $expectedTExt = "Test sanitization à ñ Ç";
-
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $output = $smsCounter->sanitizeToGSM($text);
 
-        $this->assertEquals($expectedTExt, $output);
+        $this->assertEquals($expectedText, $output);
     }
 
     public function testTruncate1SmsGSM7()
     {
-        $text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.";
-        $expectedTExt = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient ";
+        $text = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.';
+        $expectedTExt = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient ';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $output = $smsCounter->truncate($text, 1);
 
         $this->assertEquals($expectedTExt, $output);
@@ -163,10 +164,10 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testTruncate2SmsGSM7()
     {
-        $text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient";
-        $expectedTExt = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis d";
+        $text = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient';
+        $expectedTExt = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis d';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $output = $smsCounter->truncate($text, 2);
 
         $this->assertEquals($expectedTExt, $output);
@@ -174,10 +175,10 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testTruncate1SmsUnicode()
     {
-        $text = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa";
-        $expectedTExt = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipisci";
+        $text = 'Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa';
+        $expectedTExt = 'Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipisci';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $output = $smsCounter->truncate($text, 1);
 
         $this->assertEquals($expectedTExt, $output);
@@ -185,12 +186,21 @@ class SMSCounterTest extends \PHPUnit_Framework_TestCase
 
     public function testTruncate2SmsUnicode()
     {
-        $text = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula e ☃get dolor. Aenean massa Lorem ipsum dolor sit amet, consectetuer adip eg";
-        $expectedTExt = "Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula e ☃get dolor. Aenean massa Lorem ";
+        $text = 'Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula e ☃get dolor. Aenean massa Lorem ipsum dolor sit amet, consectetuer adip eg';
+        $expectedTExt = 'Snowman shows off! ☃ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula e ☃get dolor. Aenean massa Lorem ';
 
-        $smsCounter = new SMSCounter;
+        $smsCounter = new SMSCounter();
         $output = $smsCounter->truncate($text, 2);
 
         $this->assertEquals($expectedTExt, $output);
+    }
+
+    public function dataProvider()
+    {
+        return [
+            ['@£$¥èéùìòÇØøÅåΔ_ΦΓΛΩΠΨΣΘΞ^{}\[~]|€ÆæßÉ!\"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà', '@£$¥èéùìòÇØøÅåΔ_ΦΓΛΩΠΨΣΘΞ^{}\[~]|€ÆæßÉ!\"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà'],
+            ['Lhg jjjo fx 382 64237 12299 qmecb. Ç éæ+! -[Å*_ (¡)| ?Λ^ ~£;ΩΠ¿ ÑΔ #ΓüΘ¥ñ,É øΨì] ò= Ü. @å<: ö%\'Æ¤"Ö> Ø§Φ{ }/&Ä ùß\€ èà Ξ$äΣ.', 'Lhg jjjo fx 382 64237 12299 qmecb. Ç éæ+! -[Å*_ (¡)| ?Λ^ ~£;ΩΠ¿ ÑΔ #ΓüΘ¥ñ,É øΨì] ò= Ü. @å<: ö%\'Æ¤"Ö> Ø§Φ{ }/&Ä ùß\€ èà Ξ$äΣ.'],
+            ['dadáó', 'dadao'],
+        ];
     }
 }
