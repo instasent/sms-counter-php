@@ -26,6 +26,8 @@ stdClass Object
 )
 ```
 
+You can sanitize your text to be a valid GSM 03.38 charset
+
 ```php
 use Instasent\SMSCounter\SMSCounter;
 
