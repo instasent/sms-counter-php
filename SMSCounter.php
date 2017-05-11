@@ -151,7 +151,7 @@ class SMSCounter
                 break;
         }
 
-        $messages = ceil($length / $perMessage);
+        $messages = (int) ceil($length / $perMessage);
         $remaining = ($perMessage * $messages) - $length;
 
         $returnset = new \stdClass();
