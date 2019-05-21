@@ -12,6 +12,7 @@ use Instasent\SMSCounter\SMSCounter;
 
 $smsCounter = new SMSCounter();
 $smsCounter->count('some-string-to-be-counted');
+$smsCounter->countWithShiftTables('some-string-to-be-counted');
 ```
 
 which returns
@@ -26,7 +27,7 @@ stdClass Object
 )
 ```
 
-You can sanitize your text to be a valid GSM 03.38 charset
+You can sanitize your text to be a valid strict GSM 03.38 charset
 
 ```php
 use Instasent\SMSCounter\SMSCounter;
@@ -34,6 +35,15 @@ use Instasent\SMSCounter\SMSCounter;
 $smsCounter = new SMSCounter();
 $smsCounter->sanitizeToGSM('dadáó'); //return dadao
 ```
+
+#### National Language Shift Tables
+
+Starting release 8 of GSM 03.38 some additional charsets are allowed. This is the list of such National Language Shift Tables currently supported
+
+- [Turkish](https://en.wikipedia.org/wiki/GSM_03.38#Turkish_language_(Latin_script))
+- [Spanish](https://en.wikipedia.org/wiki/GSM_03.38#Spanish_language_(Latin_script))
+- [Portuguese](https://en.wikipedia.org/wiki/GSM_03.38#Portuguese_language_(Latin_script))
+
 
 ## Installation
 
