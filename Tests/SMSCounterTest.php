@@ -24,6 +24,57 @@ class SMSCounterTest extends TestCase
         $this->assertEquals($expected, $count);
     }
 
+    public function testGSM_TR()
+    {
+        $text = 'a GSM TR ç Text';
+
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->countWithShiftTables($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::GSM_7BIT_EX;
+        $expected->length = 16;
+        $expected->per_message = 160;
+        $expected->remaining = 144;
+        $expected->messages = 1;
+
+        $this->assertEquals($expected, $count);
+    }
+
+    public function testGSM_ES()
+    {
+        $text = 'a GSM ES Ú Text';
+
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->countWithShiftTables($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::GSM_7BIT_EX;
+        $expected->length = 16;
+        $expected->per_message = 160;
+        $expected->remaining = 144;
+        $expected->messages = 1;
+
+        $this->assertEquals($expected, $count);
+    }
+
+    public function testGSM_PT()
+    {
+        $text = 'a GSM PT Ã Text';
+
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->countWithShiftTables($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::GSM_7BIT_EX;
+        $expected->length = 16;
+        $expected->per_message = 160;
+        $expected->remaining = 144;
+        $expected->messages = 1;
+
+        $this->assertEquals($expected, $count);
+    }
+
     public function testGSMSymbols()
     {
         $text = 'a GSM +Text';
@@ -162,6 +213,17 @@ class SMSCounterTest extends TestCase
         $this->assertEquals($expectedTExt, $output);
     }
 
+    public function testTruncate1SmsGSM7ShiftTable()
+    {
+        $text = 'ÚLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.';
+        $expectedTExt = 'ÚLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturien';
+
+        $smsCounter = new SMSCounter();
+        $output = $smsCounter->truncateWithShiftTables($text, 1);
+
+        $this->assertEquals($expectedTExt, $output);
+    }
+
     public function testTruncate2SmsGSM7()
     {
         $text = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient';
@@ -169,6 +231,17 @@ class SMSCounterTest extends TestCase
 
         $smsCounter = new SMSCounter();
         $output = $smsCounter->truncate($text, 2);
+
+        $this->assertEquals($expectedTExt, $output);
+    }
+
+    public function testTruncate2SmsGSM7ShiftTable()
+    {
+        $text = 'çLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturie';
+        $expectedTExt = 'çLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magni';
+
+        $smsCounter = new SMSCounter();
+        $output = $smsCounter->truncateWithShiftTables($text, 2);
 
         $this->assertEquals($expectedTExt, $output);
     }

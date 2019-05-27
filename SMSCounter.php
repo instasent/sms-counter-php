@@ -105,6 +105,76 @@ class SMSCounter
         );
     }
 
+    public function getTurkishGsm7bitMap()
+    {
+        return [
+            10, 12, 13, 32, 33, 34, 35, 36,
+            37, 38, 39, 40, 41, 42, 43, 44,
+            45, 46, 47, 48, 49, 50, 51, 52,
+            53, 54, 55, 56, 57, 58, 59, 60,
+            61, 62, 63, 64, 65, 66, 67, 68,
+            69, 70, 71, 72, 73, 74, 75, 76,
+            77, 78, 79, 80, 81, 82, 83, 84,
+            85, 86, 87, 88, 89, 90, 91, 92,
+            93, 94, 95, 97, 98, 99, 100, 101,
+            102, 103, 104, 105, 106, 107, 108,
+            109, 110, 111, 112, 113, 114, 115,
+            116, 117, 118, 119, 120, 121, 122,
+            123, 124, 125, 126, 163, 164, 165,
+            167, 196, 197, 199, 201, 209, 214,
+            220, 223, 224, 228, 229, 231, 233,
+            241, 242, 246, 249, 252, 286, 287,
+            304, 305, 350, 351, 915, 916, 920,
+            923, 926, 928, 931, 934, 936, 937,
+            8364,
+        ];
+    }
+
+    public function getAddedTurkishGsm7bitExMap()
+    {
+        return [12, 91, 92, 93, 94, 123, 124, 125, 126, 286, 287, 304, 305, 350, 351, 8364];
+    }
+
+    public function getAddedSpanishGsm7bitExMap()
+    {
+        return [12, 91, 92, 93, 94, 123, 124, 125, 126, 193, 205, 211, 218, 225, 231, 237, 243, 250, 8364];
+    }
+
+    public function getPortugueseGsm7bitMap()
+    {
+        return [
+            10, 12, 13, 32, 33, 34, 35, 36,
+            37, 38, 39, 40, 41, 42, 43, 44,
+            45, 46, 47, 48, 49, 50, 51, 52,
+            53, 54, 55, 56, 57, 58, 59, 60,
+            61, 62, 63, 64, 65, 66, 67, 68,
+            69, 70, 71, 72, 73, 74, 75, 76,
+            77, 78, 79, 80, 81, 82, 83, 84,
+            85, 86, 87, 88, 89, 90, 91, 92,
+            93, 94, 95, 96, 97, 98, 99, 100,
+            101, 102, 103, 104, 105, 106, 107, 108,
+            109, 110, 111, 112, 113, 114, 115, 116,
+            117, 118, 119, 120, 121, 122, 123, 124,
+            125, 126, 163, 165, 167, 170, 186, 192,
+            193, 194, 195, 199, 201, 202, 205, 211,
+            212, 213, 218, 220, 224, 225, 226, 227,
+            231, 233, 234, 237, 242, 243, 244, 245,
+            250, 252, 915, 916, 920, 928, 931, 934,
+            936, 937, 8364, 8734,
+        ];
+    }
+
+    public function getAddedPortugueseGsm7bitExMap()
+    {
+        return [
+            12, 91, 92, 93, 94, 123, 124, 125,
+            126, 193, 194, 195, 202, 205, 211, 212,
+            213, 218, 225, 226, 227, 231, 234, 237,
+            242, 243, 245, 250, 915, 920, 928, 931,
+            934, 936, 937, 8364,
+        ];
+    }
+
     /**
      * Detects the encoding, Counts the characters, message length, remaining characters.
      *
@@ -112,11 +182,33 @@ class SMSCounter
      */
     public function count($text)
     {
+        return $this->doCount($text, false);
+    }
+
+    /**
+     * Detects the encoding, Counts the characters, message length, remaining characters.
+     * Supports language shift tables characters.
+     *
+     * @return \stdClass Object with params encoding,length, per_message, remaining, messages
+     */
+    public function countWithShiftTables($text)
+    {
+        return $this->doCount($text, true);
+    }
+
+    /**
+     * @return \stdClass Object with params encoding,length, per_message, remaining, messages
+     */
+    private function doCount($text, $supportShiftTables)
+    {
         $unicodeArray = $this->utf8ToUnicode($text);
 
         // variable to catch if any ex chars while encoding detection.
         $exChars = [];
-        $encoding = $this->detectEncoding($unicodeArray, $exChars);
+        $encoding = $supportShiftTables
+            ? $this->detectEncodingWithShiftTables($text, $exChars)
+            : $this->detectEncoding($text, $exChars);
+
         $length = count($unicodeArray);
 
         if ($encoding === self::GSM_7BIT_EX) {
@@ -173,17 +265,56 @@ class SMSCounter
     public function detectEncoding($text, &$exChars)
     {
         if (!is_array($text)) {
-            $text = self::utf8ToUnicode($text);
+            $text = $this->utf8ToUnicode($text);
         }
 
         $utf16Chars = array_diff($text, $this->getGsm7bitExMap());
-
         if (count($utf16Chars)) {
             return self::UTF16;
         }
 
         $exChars = array_intersect($text, $this->getAddedGsm7bitExMap());
+        if (count($exChars)) {
+            return self::GSM_7BIT_EX;
+        }
 
+        return self::GSM_7BIT;
+    }
+
+    /**
+     * Detects the encoding of a particular text.
+     * Supports language shift tables characters.
+     *
+     * @return string (GSM_7BIT|GSM_7BIT_EX|UTF16)
+     */
+    public function detectEncodingWithShiftTables($text, &$exChars)
+    {
+        if (!is_array($text)) {
+            $text = $this->utf8ToUnicode($text);
+        }
+
+        $gsmCharMap = array_merge(
+            $this->getGsm7bitExMap(),
+            $this->getTurkishGsm7bitMap(),
+            $this->getAddedTurkishGsm7bitExMap(),
+            $this->getAddedSpanishGsm7bitExMap(),
+            $this->getPortugueseGsm7bitMap(),
+            $this->getAddedPortugueseGsm7bitExMap()
+        );
+
+        $utf16Chars = array_diff($text, $gsmCharMap);
+        if (count($utf16Chars)) {
+            return self::UTF16;
+        }
+
+        $addedGsmCharMap = array_merge(
+            $this->getAddedGsm7bitExMap(),
+            $this->getAddedTurkishGsm7bitExMap(),
+            $this->getAddedSpanishGsm7bitExMap(),
+            $this->getAddedPortugueseGsm7bitExMap()
+        );
+
+        $exChars = array_intersect($text, $addedGsmCharMap);
         if (count($exChars)) {
             return self::GSM_7BIT_EX;
         }
@@ -296,7 +427,7 @@ class SMSCounter
     public function replaceNonGsmChars($str, $replacement = null)
     {
         $validChars = $this->getGsm7bitExMap();
-        $allChars = self::utf8ToUnicode($str);
+        $allChars = $this->utf8ToUnicode($str);
 
         if (strlen($replacement) > 1) {
             return false;
@@ -525,27 +656,50 @@ class SMSCounter
      * the encoding an multipart limits to apply the truncate.
      *
      * @param string $str      Message text
-     * @param int    $messages Number of SMS allowed
+     * @param int    $limitSms Number of SMS allowed
      *
      * @return string Truncated message
      */
     public function truncate($str, $limitSms)
     {
-        $count = $this->count($str);
+        return $this->doTruncate($str, $limitSms, false);
+    }
+
+    /**
+     * Truncated to the limit of chars allowed by number of SMS. It will detect
+     * the encoding an multipart limits to apply the truncate.
+     * Supports language shift tables characters.
+     *
+     * @param string $str      Message text
+     * @param int    $limitSms Number of SMS allowed
+     *
+     * @return string Truncated message
+     */
+    public function truncateWithShiftTables($str, $limitSms)
+    {
+        return $this->doTruncate($str, $limitSms, true);
+    }
+
+    /**
+     * @return string Truncated message
+     */
+    private function doTruncate($str, $limitSms, $supportShiftTables)
+    {
+        $count = $supportShiftTables
+            ? $this->countWithShiftTables($str)
+            : $this->count($str);
 
         if ($count->messages <= $limitSms) {
             return $str;
         }
 
-        if ($count->encoding == 'UTF16') {
+        if ($count->encoding === 'UTF16') {
             $limit = self::UTF16_LEN;
 
             if ($limitSms > 2) {
                 $limit = self::UTF16_LEN_MULTIPART;
             }
-        }
-
-        if ($count->encoding != 'UTF16') {
+        } else {
             $limit = self::GSM_7BIT_LEN;
 
             if ($limitSms > 2) {
@@ -555,7 +709,9 @@ class SMSCounter
 
         do {
             $str = mb_substr($str, 0, $limit * $limitSms);
-            $count = $this->count($str);
+            $count = $supportShiftTables
+                ? $this->countWithShiftTables($str)
+                : $this->count($str);
 
             $limit = $limit - 1;
         } while ($count->messages > $limitSms);
