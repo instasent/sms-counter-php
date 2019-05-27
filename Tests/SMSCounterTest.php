@@ -180,6 +180,23 @@ class SMSCounterTest extends TestCase
         $this->assertEquals($expected, $count);
     }
 
+    public function testUnicodeEmoji()
+    {
+        $text = '😎😎';
+
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->count($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::UTF16;
+        $expected->length = 2;
+        $expected->per_message = 70;
+        $expected->remaining = 68;
+        $expected->messages = 1;
+
+        $this->assertEquals($expected, $count);
+    }
+
     public function testRemoveNonGSMChars()
     {
         $text = 'áno-unicode-remaining` ñ';
