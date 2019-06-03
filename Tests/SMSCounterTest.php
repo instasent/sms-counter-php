@@ -164,6 +164,17 @@ class SMSCounterTest extends TestCase
         $this->assertEquals($expected, $count);
     }
 
+    public function testUnicodeChars()
+    {
+        $smsCounter = new SMSCounter();
+
+        $this->assertEquals([96], $smsCounter->utf8ToUnicode('`')); // U+60
+        $this->assertEquals([882], $smsCounter->utf8ToUnicode('Ͳ')); // U+0372
+        $this->assertEquals([2210], $smsCounter->utf8ToUnicode('ࢢ')); // U+08A2
+        $this->assertEquals([11821], $smsCounter->utf8ToUnicode('⸭')); // U+2E2D
+        $this->assertEquals([128526], $smsCounter->utf8ToUnicode('😎')); // U+1F60E
+    }
+
     public function testUnicode()
     {
         $text = '`';
@@ -182,17 +193,17 @@ class SMSCounterTest extends TestCase
 
     public function testUnicodeEmoji()
     {
-        $text = '😎😎';
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎';
 
         $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::UTF16;
-        $expected->length = 2;
-        $expected->per_message = 70;
-        $expected->remaining = 68;
-        $expected->messages = 1;
+        $expected->length = 77;
+        $expected->per_message = 67;
+        $expected->remaining = 57;
+        $expected->messages = 2;
 
         $this->assertEquals($expected, $count);
     }

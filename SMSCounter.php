@@ -355,9 +355,19 @@ class SMSCounter
                 $values[] = $thisValue;
 
                 if (count($values) === $lookingFor) {
-                    $number = ($lookingFor === 3) ?
-                    (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64) :
-                    (($values[0] % 32) * 64) + ($values[1] % 64);
+                    switch ($lookingFor) {
+                        case 4:
+                            $number = (($values[0] % 16) * 262144) + (($values[1] % 64) * 4096) + (($values[2] % 64) * 64) + ($values[3] % 64);
+                            break;
+
+                        case 3:
+                            $number = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
+                            break;
+
+                        case 2:
+                            $number = (($values[0] % 32) * 64) + ($values[1] % 64);
+                            break;
+                    }
 
                     $unicode[] = $number;
                     $values = [];
