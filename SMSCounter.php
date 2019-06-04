@@ -216,6 +216,21 @@ class SMSCounter
             // Each exchar in the GSM 7 Bit encoding takes one more space
             // Hence the length increases by one char for each of those Ex chars.
             $length += $lengthExchars;
+        } elseif ($encoding === self::UTF16) {
+            // Unicode chars over U+10000 occupy an extra byte
+            $lengthExtra = array_reduce(
+                $unicodeArray,
+                function ($carry, $char) {
+                    if ($char >= 65536) {
+                        $carry++;
+                    }
+
+                    return $carry;
+                },
+                0
+            );
+
+            $length += $lengthExtra;
         }
 
         // Select the per message length according to encoding and the message length
