@@ -217,18 +217,62 @@ class SMSCounterTest extends TestCase
         $this->assertEquals($expected, $count);
     }
 
-    public function testUnicodeEmoji()
+    public function testUnicodeEmojiSingleMessage()
     {
-        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎';
-
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎';
         $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::UTF16;
-        $expected->length = 132;
+        $expected->length = 70;
+        $expected->per_message = 70;
+        $expected->remaining = 0;
+        $expected->messages = 1;
+
+        $this->assertEquals($expected, $count);
+    }
+
+    public function testUnicodeEmojiMultiPartMessage()
+    {
+        // A char is lost at the end of first part
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎';
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->count($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::UTF16;
+        $expected->length = 72;
         $expected->per_message = 67;
-        $expected->remaining = 2;
+        $expected->remaining = 61;
+        $expected->messages = 2;
+
+        $this->assertEquals($expected, $count);
+
+        // First part is completed with a dash char (-)
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎-😎😎😎';
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->count($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::UTF16;
+        $expected->length = 73;
+        $expected->per_message = 67;
+        $expected->remaining = 61;
+        $expected->messages = 2;
+
+        $this->assertEquals($expected, $count);
+
+        // Both parts are completed with dash chars (-)
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎-😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎-';
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->count($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::UTF16;
+        $expected->length = 134;
+        $expected->per_message = 67;
+        $expected->remaining = 0;
         $expected->messages = 2;
 
         $this->assertEquals($expected, $count);

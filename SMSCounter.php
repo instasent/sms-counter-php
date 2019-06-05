@@ -259,7 +259,23 @@ class SMSCounter
         }
 
         $messages = (int) ceil($length / $perMessage);
-        $remaining = ($perMessage * $messages) - $length;
+
+        if ($encoding === self::UTF16 && $length > $perMessage) {
+            $count = 0;
+            foreach ($unicodeArray as $char) {
+                if ($count === $perMessage) {
+                    $count = 0;
+                } elseif ($count > $perMessage) {
+                    $count = 2;
+                }
+
+                $count += $char >= 65536 ? 2 : 1;
+            }
+
+            $remaining = $perMessage - ($count > $perMessage ? 2 : $count);
+        } else {
+            $remaining = ($perMessage * $messages) - $length;
+        }
 
         $returnset = new \stdClass();
 
