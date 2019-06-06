@@ -216,6 +216,21 @@ class SMSCounter
             // Each exchar in the GSM 7 Bit encoding takes one more space
             // Hence the length increases by one char for each of those Ex chars.
             $length += $lengthExchars;
+        } elseif ($encoding === self::UTF16) {
+            // Unicode chars over U+10000 occupy an extra byte
+            $lengthExtra = array_reduce(
+                $unicodeArray,
+                function ($carry, $char) {
+                    if ($char >= 65536) {
+                        $carry++;
+                    }
+
+                    return $carry;
+                },
+                0
+            );
+
+            $length += $lengthExtra;
         }
 
         // Select the per message length according to encoding and the message length
@@ -244,7 +259,23 @@ class SMSCounter
         }
 
         $messages = (int) ceil($length / $perMessage);
-        $remaining = ($perMessage * $messages) - $length;
+
+        if ($encoding === self::UTF16 && $length > $perMessage) {
+            $count = 0;
+            foreach ($unicodeArray as $char) {
+                if ($count === $perMessage) {
+                    $count = 0;
+                } elseif ($count > $perMessage) {
+                    $count = 2;
+                }
+
+                $count += $char >= 65536 ? 2 : 1;
+            }
+
+            $remaining = $perMessage - ($count > $perMessage ? 2 : $count);
+        } else {
+            $remaining = ($perMessage * $messages) - $length;
+        }
 
         $returnset = new \stdClass();
 
@@ -355,9 +386,19 @@ class SMSCounter
                 $values[] = $thisValue;
 
                 if (count($values) === $lookingFor) {
-                    $number = ($lookingFor === 3) ?
-                    (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64) :
-                    (($values[0] % 32) * 64) + ($values[1] % 64);
+                    switch ($lookingFor) {
+                        case 4:
+                            $number = (($values[0] % 16) * 262144) + (($values[1] % 64) * 4096) + (($values[2] % 64) * 64) + ($values[3] % 64);
+                            break;
+
+                        case 3:
+                            $number = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
+                            break;
+
+                        case 2:
+                            $number = (($values[0] % 32) * 64) + ($values[1] % 64);
+                            break;
+                    }
 
                     $unicode[] = $number;
                     $values = [];

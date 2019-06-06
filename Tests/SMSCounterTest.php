@@ -164,6 +164,43 @@ class SMSCounterTest extends TestCase
         $this->assertEquals($expected, $count);
     }
 
+    public function testUnicodeEncodingAndLength()
+    {
+        $smsCounter = new SMSCounter();
+
+        // 1 byte UTF8
+        $this->assertEquals([33], $smsCounter->utf8ToUnicode('!')); // U+0021 => 0x21
+        $this->assertEquals(1, $smsCounter->count('!')->length);
+
+        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+            $this->assertEquals([127], $smsCounter->utf8ToUnicode("\u{007F}")); // U+007F => 0x7F
+            $this->assertEquals(1, $smsCounter->count("\u{007F}")->length);
+        }
+
+        // 2 bytes UTF8
+        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+            $this->assertEquals([128], $smsCounter->utf8ToUnicode("\u{0080}")); // U+0080 => 0xC2 0x80
+            $this->assertEquals(1, $smsCounter->count("\u{0080}")->length);
+        }
+
+        $this->assertEquals([2047], $smsCounter->utf8ToUnicode('߿')); // U+07FF => 0xDF 0xBF
+        $this->assertEquals(1, $smsCounter->count('߿')->length);
+
+        // 3 bytes UTF8
+        $this->assertEquals([2048], $smsCounter->utf8ToUnicode('ࠀ')); // U+0800 => 0xE0 0xA0 0x80
+        $this->assertEquals(1, $smsCounter->count('ࠀ')->length);
+
+        $this->assertEquals([65535], $smsCounter->utf8ToUnicode('￿')); // U+FFFF => 0xEF 0xBF 0xBF
+        $this->assertEquals(1, $smsCounter->count('￿')->length);
+
+        // 4 bytes UTF8
+        $this->assertEquals([65536], $smsCounter->utf8ToUnicode('𐀀')); // U+10000 => 0xF0 0x90 0x80 0x80
+        $this->assertEquals(2, $smsCounter->count('𐀀')->length);
+
+        $this->assertEquals([983295], $smsCounter->utf8ToUnicode('󰃿')); // U+F00FF => 0xF3 0xB0 0x83 0xBF
+        $this->assertEquals(2, $smsCounter->count('󰃿')->length);
+    }
+
     public function testUnicode()
     {
         $text = '`';
@@ -180,19 +217,63 @@ class SMSCounterTest extends TestCase
         $this->assertEquals($expected, $count);
     }
 
-    public function testUnicodeEmoji()
+    public function testUnicodeEmojiSingleMessage()
     {
-        $text = '😎😎';
-
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎';
         $smsCounter = new SMSCounter();
         $count = $smsCounter->count($text);
 
         $expected = new \stdClass();
         $expected->encoding = SMSCounter::UTF16;
-        $expected->length = 2;
+        $expected->length = 70;
         $expected->per_message = 70;
-        $expected->remaining = 68;
+        $expected->remaining = 0;
         $expected->messages = 1;
+
+        $this->assertEquals($expected, $count);
+    }
+
+    public function testUnicodeEmojiMultiPartMessage()
+    {
+        // A char is lost at the end of first part
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎';
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->count($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::UTF16;
+        $expected->length = 72;
+        $expected->per_message = 67;
+        $expected->remaining = 61;
+        $expected->messages = 2;
+
+        $this->assertEquals($expected, $count);
+
+        // First part is completed with a dash char (-)
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎-😎😎😎';
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->count($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::UTF16;
+        $expected->length = 73;
+        $expected->per_message = 67;
+        $expected->remaining = 61;
+        $expected->messages = 2;
+
+        $this->assertEquals($expected, $count);
+
+        // Both parts are completed with dash chars (-)
+        $text = '😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎-😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎-';
+        $smsCounter = new SMSCounter();
+        $count = $smsCounter->count($text);
+
+        $expected = new \stdClass();
+        $expected->encoding = SMSCounter::UTF16;
+        $expected->length = 134;
+        $expected->per_message = 67;
+        $expected->remaining = 0;
+        $expected->messages = 2;
 
         $this->assertEquals($expected, $count);
     }

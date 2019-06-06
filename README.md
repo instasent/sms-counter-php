@@ -27,6 +27,12 @@ stdClass Object
 )
 ```
 
+##### UTF16 notice
+
+When using unicode chars over U+10000 (mainly emoticons 😎) on messages larger than 70 chars the _remaining_ value will actually be the **remaining chars in last message part only**, this is due to how those chars are encoded using two 16bit chars and max part length being an odd number (67)
+
+#### Sanitization
+
 You can sanitize your text to be a valid strict GSM 03.38 charset
 
 ```php
