@@ -689,6 +689,8 @@ class SMSCounter
           'Ǚ' => 'U', 'ǚ' => 'u',
           // grave accent
           'Ǜ' => 'U', 'ǜ' => 'u',
+          // Right Single Quotation Mark
+          '’' => '\'',
           // spaces
           ' ' => ' ', ' ' => ' ',
         ];
