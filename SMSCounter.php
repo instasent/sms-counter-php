@@ -2,6 +2,8 @@
 
 namespace Instasent\SMSCounter;
 
+use stdClass;
+
 class SMSCounter
 {
     /**
@@ -9,178 +11,161 @@ class SMSCounter
      *
      * @var string
      */
-    const GSM_7BIT = 'GSM_7BIT';
+    public const GSM_7BIT = 'GSM_7BIT';
 
     /**
      * GSM 7BIT Extended ecoding name.
      *
      * @var string
      */
-    const GSM_7BIT_EX = 'GSM_7BIT_EX';
+    public const GSM_7BIT_EX = 'GSM_7BIT_EX';
 
     /**
      * UTF16 or UNICODE ecoding name.
      *
      * @var string
      */
-    const UTF16 = 'UTF16';
+    public const UTF16 = 'UTF16';
 
     /**
      * Message length for GSM 7 Bit charset.
      *
      * @var int
      */
-    const GSM_7BIT_LEN = 160;
+    public const GSM_7BIT_LEN = 160;
 
     /**
      * Message length for GSM 7 Bit charset with extended characters.
      *
      * @var int
      */
-    const GSM_7BIT_EX_LEN = 160;
+    public const GSM_7BIT_EX_LEN = 160;
 
     /**
      * Message length for UTF16/Unicode charset.
      *
      * @var int
      */
-    const UTF16_LEN = 70;
+    public const UTF16_LEN = 70;
 
     /**
      * Message length for multipart message in GSM 7 Bit encoding.
      *
      * @var int
      */
-    const GSM_7BIT_LEN_MULTIPART = 153;
+    public const GSM_7BIT_LEN_MULTIPART = 153;
 
     /**
      * Message length for multipart message in GSM 7 Bit encoding.
      *
      * @var int
      */
-    const GSM_7BIT_EX_LEN_MULTIPART = 153;
+    public const GSM_7BIT_EX_LEN_MULTIPART = 153;
 
     /**
      * Message length for multipart message in GSM 7 Bit encoding.
      *
      * @var int
      */
-    const UTF16_LEN_MULTIPART = 67;
+    public const UTF16_LEN_MULTIPART = 67;
 
-    public function getGsm7bitMap()
-    {
-        return [
-            10, 12, 13, 32, 33, 34, 35, 36,
-            37, 38, 39, 40, 41, 42, 43, 44,
-            45, 46, 47, 48, 49, 50, 51, 52,
-            53, 54, 55, 56, 57, 58, 59, 60,
-            61, 62, 63, 64, 65, 66, 67, 68,
-            69, 70, 71, 72, 73, 74, 75, 76,
-            77, 78, 79, 80, 81, 82, 83, 84,
-            85, 86, 87, 88, 89, 90, 91, 92,
-            93,  94, 95, 97, 98, 99, 100, 101,
-            102, 103, 104, 105, 106, 107, 108,
-            109, 110, 111, 112, 113, 114, 115,
-            116, 117, 118, 119, 120, 121, 122,
-            123, 124, 125, 126, 161, 163, 164,
-            165, 167, 191, 196, 197, 198, 199,
-            201, 209, 214, 216, 220, 223, 224,
-            228, 229, 230, 232, 233, 236, 241,
-            242, 246, 248, 249, 252, 915, 916,
-            920, 923, 926, 928, 931, 934, 936,
-            937, 8364,
-        ];
-    }
+    public const GSM_7BIT_MAP = [
+        10, 12, 13, 32, 33, 34, 35, 36,
+        37, 38, 39, 40, 41, 42, 43, 44,
+        45, 46, 47, 48, 49, 50, 51, 52,
+        53, 54, 55, 56, 57, 58, 59, 60,
+        61, 62, 63, 64, 65, 66, 67, 68,
+        69, 70, 71, 72, 73, 74, 75, 76,
+        77, 78, 79, 80, 81, 82, 83, 84,
+        85, 86, 87, 88, 89, 90, 91, 92,
+        93,  94, 95, 97, 98, 99, 100, 101,
+        102, 103, 104, 105, 106, 107, 108,
+        109, 110, 111, 112, 113, 114, 115,
+        116, 117, 118, 119, 120, 121, 122,
+        123, 124, 125, 126, 161, 163, 164,
+        165, 167, 191, 196, 197, 198, 199,
+        201, 209, 214, 216, 220, 223, 224,
+        228, 229, 230, 232, 233, 236, 241,
+        242, 246, 248, 249, 252, 915, 916,
+        920, 923, 926, 928, 931, 934, 936,
+        937, 8364
+    ];
 
-    public function getAddedGsm7bitExMap()
-    {
-        return [12, 91, 92, 93, 94, 123, 124, 125, 126, 8364];
-    }
+    public const ADDED_GSM_7BIT_MAP = [
+        12, 91, 92, 93, 94, 123, 124,
+        125, 126, 8364
+    ];
 
-    public function getGsm7bitExMap()
-    {
-        return array_merge(
-            $this->getGsm7bitMap(),
-            $this->getAddedGsm7bitExMap()
-        );
-    }
+    public const TURKISH_GSM_7BIT_MAP = [
+        10, 12, 13, 32, 33, 34, 35, 36,
+        37, 38, 39, 40, 41, 42, 43, 44,
+        45, 46, 47, 48, 49, 50, 51, 52,
+        53, 54, 55, 56, 57, 58, 59, 60,
+        61, 62, 63, 64, 65, 66, 67, 68,
+        69, 70, 71, 72, 73, 74, 75, 76,
+        77, 78, 79, 80, 81, 82, 83, 84,
+        85, 86, 87, 88, 89, 90, 91, 92,
+        93, 94, 95, 97, 98, 99, 100, 101,
+        102, 103, 104, 105, 106, 107, 108,
+        109, 110, 111, 112, 113, 114, 115,
+        116, 117, 118, 119, 120, 121, 122,
+        123, 124, 125, 126, 163, 164, 165,
+        167, 196, 197, 199, 201, 209, 214,
+        220, 223, 224, 228, 229, 231, 233,
+        241, 242, 246, 249, 252, 286, 287,
+        304, 305, 350, 351, 915, 916, 920,
+        923, 926, 928, 931, 934, 936, 937,
+        8364
+    ];
 
-    public function getTurkishGsm7bitMap()
-    {
-        return [
-            10, 12, 13, 32, 33, 34, 35, 36,
-            37, 38, 39, 40, 41, 42, 43, 44,
-            45, 46, 47, 48, 49, 50, 51, 52,
-            53, 54, 55, 56, 57, 58, 59, 60,
-            61, 62, 63, 64, 65, 66, 67, 68,
-            69, 70, 71, 72, 73, 74, 75, 76,
-            77, 78, 79, 80, 81, 82, 83, 84,
-            85, 86, 87, 88, 89, 90, 91, 92,
-            93, 94, 95, 97, 98, 99, 100, 101,
-            102, 103, 104, 105, 106, 107, 108,
-            109, 110, 111, 112, 113, 114, 115,
-            116, 117, 118, 119, 120, 121, 122,
-            123, 124, 125, 126, 163, 164, 165,
-            167, 196, 197, 199, 201, 209, 214,
-            220, 223, 224, 228, 229, 231, 233,
-            241, 242, 246, 249, 252, 286, 287,
-            304, 305, 350, 351, 915, 916, 920,
-            923, 926, 928, 931, 934, 936, 937,
-            8364,
-        ];
-    }
+    public const ADDED_TURKISH_GSM_7BIT_EX_MAP = [
+        12, 91, 92, 93, 94, 123, 124,
+        125, 126, 286, 287, 304, 305,
+        350, 351, 8364
+    ];
 
-    public function getAddedTurkishGsm7bitExMap()
-    {
-        return [12, 91, 92, 93, 94, 123, 124, 125, 126, 286, 287, 304, 305, 350, 351, 8364];
-    }
+    public const ADDED_SPANISH_GSM_7BIT_EX_MAP = [
+        12, 91, 92, 93, 94, 123, 124,
+        125, 126, 193, 205, 211, 218, 225,
+        231, 237, 243, 250, 8364
+    ];
 
-    public function getAddedSpanishGsm7bitExMap()
-    {
-        return [12, 91, 92, 93, 94, 123, 124, 125, 126, 193, 205, 211, 218, 225, 231, 237, 243, 250, 8364];
-    }
+    public const PORTUGUESE_GSM_7BIT_MAP = [
+        10, 12, 13, 32, 33, 34, 35, 36,
+        37, 38, 39, 40, 41, 42, 43, 44,
+        45, 46, 47, 48, 49, 50, 51, 52,
+        53, 54, 55, 56, 57, 58, 59, 60,
+        61, 62, 63, 64, 65, 66, 67, 68,
+        69, 70, 71, 72, 73, 74, 75, 76,
+        77, 78, 79, 80, 81, 82, 83, 84,
+        85, 86, 87, 88, 89, 90, 91, 92,
+        93, 94, 95, 96, 97, 98, 99, 100,
+        101, 102, 103, 104, 105, 106, 107,
+        108, 109, 110, 111, 112, 113, 114,
+        115, 116, 117, 118, 119, 120, 121,
+        122, 123, 124, 125, 126, 163, 165,
+        167, 170, 186, 192, 193, 194, 195,
+        199, 201, 202, 205, 211, 212, 213,
+        218, 220, 224, 225, 226, 227, 231,
+        233, 234, 237, 242, 243, 244, 245,
+        250, 252, 915, 916, 920, 928, 931,
+        934, 936, 937, 8364, 8734
+    ];
 
-    public function getPortugueseGsm7bitMap()
-    {
-        return [
-            10, 12, 13, 32, 33, 34, 35, 36,
-            37, 38, 39, 40, 41, 42, 43, 44,
-            45, 46, 47, 48, 49, 50, 51, 52,
-            53, 54, 55, 56, 57, 58, 59, 60,
-            61, 62, 63, 64, 65, 66, 67, 68,
-            69, 70, 71, 72, 73, 74, 75, 76,
-            77, 78, 79, 80, 81, 82, 83, 84,
-            85, 86, 87, 88, 89, 90, 91, 92,
-            93, 94, 95, 96, 97, 98, 99, 100,
-            101, 102, 103, 104, 105, 106, 107, 108,
-            109, 110, 111, 112, 113, 114, 115, 116,
-            117, 118, 119, 120, 121, 122, 123, 124,
-            125, 126, 163, 165, 167, 170, 186, 192,
-            193, 194, 195, 199, 201, 202, 205, 211,
-            212, 213, 218, 220, 224, 225, 226, 227,
-            231, 233, 234, 237, 242, 243, 244, 245,
-            250, 252, 915, 916, 920, 928, 931, 934,
-            936, 937, 8364, 8734,
-        ];
-    }
-
-    public function getAddedPortugueseGsm7bitExMap()
-    {
-        return [
-            12, 91, 92, 93, 94, 123, 124, 125,
-            126, 193, 194, 195, 202, 205, 211, 212,
-            213, 218, 225, 226, 227, 231, 234, 237,
-            242, 243, 245, 250, 915, 920, 928, 931,
-            934, 936, 937, 8364,
-        ];
-    }
+    public const ADDED_PORTUGUESE_GSM_7BIT_EX_MAP = [
+        12, 91, 92, 93, 94, 123, 124, 125,
+        126, 193, 194, 195, 202, 205, 211, 212,
+        213, 218, 225, 226, 227, 231, 234, 237,
+        242, 243, 245, 250, 915, 920, 928, 931,
+        934, 936, 937, 8364
+    ];
 
     /**
      * Detects the encoding, Counts the characters, message length, remaining characters.
      *
      * @return \stdClass Object with params encoding,length, per_message, remaining, messages
      */
-    public function count($text)
+    public function count(string $text): \stdClass
     {
         return $this->doCount($text, false);
     }
@@ -191,7 +176,7 @@ class SMSCounter
      *
      * @return \stdClass Object with params encoding,length, per_message, remaining, messages
      */
-    public function countWithShiftTables($text)
+    public function countWithShiftTables(string $text): \stdClass
     {
         return $this->doCount($text, true);
     }
@@ -199,7 +184,7 @@ class SMSCounter
     /**
      * @return \stdClass Object with params encoding,length, per_message, remaining, messages
      */
-    private function doCount($text, $supportShiftTables)
+    private function doCount(string $text, bool $supportShiftTables): \stdClass
     {
         $unicodeArray = $this->utf8ToUnicode($text);
 
@@ -234,29 +219,11 @@ class SMSCounter
         }
 
         // Select the per message length according to encoding and the message length
-        switch ($encoding) {
-            case self::GSM_7BIT:
-                $perMessage = self::GSM_7BIT_LEN;
-                if ($length > self::GSM_7BIT_LEN) {
-                    $perMessage = self::GSM_7BIT_LEN_MULTIPART;
-                }
-                break;
-
-            case self::GSM_7BIT_EX:
-                $perMessage = self::GSM_7BIT_EX_LEN;
-                if ($length > self::GSM_7BIT_EX_LEN) {
-                    $perMessage = self::GSM_7BIT_EX_LEN_MULTIPART;
-                }
-                break;
-
-            default:
-                $perMessage = self::UTF16_LEN;
-                if ($length > self::UTF16_LEN) {
-                    $perMessage = self::UTF16_LEN_MULTIPART;
-                }
-
-                break;
-        }
+        $perMessage = match ($encoding) {
+            self::GSM_7BIT => ($length > self::GSM_7BIT_LEN) ? self::GSM_7BIT_LEN_MULTIPART : self::GSM_7BIT_LEN,
+            self::GSM_7BIT_EX => ($length > self::GSM_7BIT_EX_LEN) ? self::GSM_7BIT_EX_LEN_MULTIPART : self::GSM_7BIT_EX_LEN,
+            default => ($length > self::UTF16_LEN) ? self::UTF16_LEN_MULTIPART : self::UTF16_LEN
+        };
 
         $messages = (int) ceil($length / $perMessage);
 
@@ -293,18 +260,18 @@ class SMSCounter
      *
      * @return string (GSM_7BIT|GSM_7BIT_EX|UTF16)
      */
-    public function detectEncoding($text, &$exChars)
+    public function detectEncoding(string $text, array &$exChars): string
     {
         if (!is_array($text)) {
             $text = $this->utf8ToUnicode($text);
         }
 
-        $utf16Chars = array_diff($text, $this->getGsm7bitExMap());
+        $utf16Chars = array_diff($text, self::GSM_7BIT_MAP);
         if (count($utf16Chars)) {
             return self::UTF16;
         }
 
-        $exChars = array_intersect($text, $this->getAddedGsm7bitExMap());
+        $exChars = array_intersect($text, self::ADDED_GSM_7BIT_MAP);
         if (count($exChars)) {
             return self::GSM_7BIT_EX;
         }
@@ -318,19 +285,19 @@ class SMSCounter
      *
      * @return string (GSM_7BIT|GSM_7BIT_EX|UTF16)
      */
-    public function detectEncodingWithShiftTables($text, &$exChars)
+    public function detectEncodingWithShiftTables(string $text, array &$exChars): string
     {
         if (!is_array($text)) {
             $text = $this->utf8ToUnicode($text);
         }
 
         $gsmCharMap = array_merge(
-            $this->getGsm7bitExMap(),
-            $this->getTurkishGsm7bitMap(),
-            $this->getAddedTurkishGsm7bitExMap(),
-            $this->getAddedSpanishGsm7bitExMap(),
-            $this->getPortugueseGsm7bitMap(),
-            $this->getAddedPortugueseGsm7bitExMap()
+            self::GSM_7BIT_MAP,
+            self::TURKISH_GSM_7BIT_MAP,
+            self::ADDED_TURKISH_GSM_7BIT_EX_MAP,
+            self::ADDED_SPANISH_GSM_7BIT_EX_MAP,
+            self::PORTUGUESE_GSM_7BIT_MAP,
+            self::ADDED_PORTUGUESE_GSM_7BIT_EX_MAP
         );
 
         $utf16Chars = array_diff($text, $gsmCharMap);
@@ -339,10 +306,10 @@ class SMSCounter
         }
 
         $addedGsmCharMap = array_merge(
-            $this->getAddedGsm7bitExMap(),
-            $this->getAddedTurkishGsm7bitExMap(),
-            $this->getAddedSpanishGsm7bitExMap(),
-            $this->getAddedPortugueseGsm7bitExMap()
+            self::ADDED_GSM_7BIT_MAP,
+            self::ADDED_TURKISH_GSM_7BIT_EX_MAP,
+            self::ADDED_SPANISH_GSM_7BIT_EX_MAP,
+            self::ADDED_PORTUGUESE_GSM_7BIT_EX_MAP
         );
 
         $exChars = array_intersect($text, $addedGsmCharMap);
@@ -358,7 +325,7 @@ class SMSCounter
      *
      * @return array
      */
-    public function utf8ToUnicode($str)
+    public function utf8ToUnicode(string $str): array
     {
         $unicode = [];
         $values = [];
@@ -386,19 +353,11 @@ class SMSCounter
                 $values[] = $thisValue;
 
                 if (count($values) === $lookingFor) {
-                    switch ($lookingFor) {
-                        case 4:
-                            $number = (($values[0] % 16) * 262144) + (($values[1] % 64) * 4096) + (($values[2] % 64) * 64) + ($values[3] % 64);
-                            break;
-
-                        case 3:
-                            $number = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
-                            break;
-
-                        case 2:
-                            $number = (($values[0] % 32) * 64) + ($values[1] % 64);
-                            break;
-                    }
+                    $number = match ($lookingFor) {
+                        4 => (($values[0] % 16) * 262144) + (($values[1] % 64) * 4096) + (($values[2] % 64) * 64) + ($values[3] % 64),
+                        3 => (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64),
+                        2 => (($values[0] % 32) * 64) + ($values[1] % 64)
+                    };
 
                     $unicode[] = $number;
                     $values = [];
@@ -413,9 +372,9 @@ class SMSCounter
     /**
      * Unicode equivalent chr() function.
      *
-     * @return array characters
+     * @return string characters
      */
-    public function utf8Chr($unicode)
+    public function utf8Chr(string $unicode): string
     {
         $unicode = intval($unicode);
 
@@ -442,7 +401,7 @@ class SMSCounter
      *
      * @return string utf8 encoded string
      */
-    public function unicodeToUtf8($array)
+    public function unicodeToUtf8(array $array): string
     {
         $str = '';
         foreach ($array as $a) {
@@ -457,9 +416,9 @@ class SMSCounter
      *
      * @return string
      */
-    public function removeNonGsmChars($str)
+    public function removeNonGsmChars(string $str): string
     {
-        return $this->replaceNonGsmChars($str, null);
+        return $this->replaceNonGsmChars($str);
     }
 
     /**
@@ -471,9 +430,9 @@ class SMSCounter
      * @return (string|false) if replacement string is more than 1 character
      *                        in length
      */
-    public function replaceNonGsmChars($str, $replacement = null)
+    public function replaceNonGsmChars(string $str, string $replacement = ''): string|bool
     {
-        $validChars = $this->getGsm7bitExMap();
+        $validChars = self::GSM_7BIT_MAP;
         $allChars = $this->utf8ToUnicode($str);
 
         if (strlen($replacement) > 1) {
@@ -505,7 +464,7 @@ class SMSCounter
         return $this->unicodeToUtf8($allChars);
     }
 
-    public function sanitizeToGSM($str)
+    public function sanitizeToGSM(string $str): string
     {
         $str = $this->removeAccents($str);
         $str = $this->removeNonGsmChars($str);
@@ -518,7 +477,7 @@ class SMSCounter
      *
      * @return string Sanitized message text
      */
-    public function removeAccents($str)
+    public function removeAccents(string $str): string
     {
         if (!preg_match('/[\x80-\xff]/', $str)) {
             return $str;
@@ -709,7 +668,7 @@ class SMSCounter
      *
      * @return string Truncated message
      */
-    public function truncate($str, $limitSms)
+    public function truncate(string $str, int $limitSms): string
     {
         return $this->doTruncate($str, $limitSms, false);
     }
@@ -724,7 +683,7 @@ class SMSCounter
      *
      * @return string Truncated message
      */
-    public function truncateWithShiftTables($str, $limitSms)
+    public function truncateWithShiftTables(string $str, int $limitSms): string
     {
         return $this->doTruncate($str, $limitSms, true);
     }
@@ -732,7 +691,7 @@ class SMSCounter
     /**
      * @return string Truncated message
      */
-    private function doTruncate($str, $limitSms, $supportShiftTables)
+    private function doTruncate(string $str, int $limitSms, bool $supportShiftTables): string
     {
         $count = $supportShiftTables
             ? $this->countWithShiftTables($str)
