@@ -182,6 +182,10 @@ class SMSCounter
      */
     public function count($text)
     {
+        //Implemented normalization of newline characters in the SMS count function to ensure consistent and accurate SMS length calculations across different platforms.
+        //This fix standardizes the handling of newlines by converting `\r\n` to `\n`, addressing the issue where SMS parts were calculated differently due to varying newline character lengths in different operating systems.
+
+        $text = str_replace("\r\n", "\n", $message)
         return $this->doCount($text, false);
     }
 
